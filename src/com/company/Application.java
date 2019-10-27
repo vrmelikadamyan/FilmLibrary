@@ -18,8 +18,7 @@ public class Application {
         Scanner in = new Scanner(System.in);
         System.out.print("Меню:\n 1. Вход\n 2. Регистрация\nВыберите действие: ");
         int number = in.nextInt();
-        while (number < 1 || number > 2) {
-            System.out.println("Вы ввели неверный пункт, попробуйте ещё раз: ");
+        while (!isNumberValid(number, 2)) {
             number = in.nextInt();
         }
 
@@ -76,10 +75,9 @@ public class Application {
     public void userMenu(User currentUser) {
         Scanner input = new Scanner(System.in);
         System.out.println("Добро пожаловать, " + currentUser.getNickName() + "!");
-        System.out.print("Меню:\n 1. Поиск\n 2. Оставить отзыв\n 3. Выйти\nВыберите действие: ");
+        System.out.print("Меню:\n 1. Поиск\n 2. Выйти\nВыберите действие: ");
         int number = input.nextInt();
-        while (number < 1 || number > 3) {
-            System.out.println("Вы ввели неверный пункт, попробуйте ещё раз: ");
+        while (!isNumberValid(number, 2)) {
             number = input.nextInt();
         }
 
@@ -87,9 +85,7 @@ public class Application {
             case 1:
                 search(currentUser);
                 break;
-            case 2: //setReview();
-                break;
-            case 3:
+            case 2:
                 currentUser = null;
                 mainMenu();
         }
@@ -100,8 +96,7 @@ public class Application {
         System.out.println("Добро пожаловать, " + currentUser.getNickName() + "!");
         System.out.print("Меню:\n 1. Поиск\n 2. Модерация отзывов\n 3. Выйти\nВыберите действие: ");
         int number = input.nextInt();
-        while (number < 1 || number > 3) {
-            System.out.println("Вы ввели неверный пункт, попробуйте ещё раз: ");
+        while (!isNumberValid(number, 3)) {
             number = input.nextInt();
         }
 
@@ -109,7 +104,7 @@ public class Application {
             case 1:
                 search(currentUser);
                 break;
-            case 2: //moderateReviews();
+            case 2: //filmDB.moderateReview();
                 break;
             case 3:
                 currentUser = null;
@@ -121,20 +116,19 @@ public class Application {
         Scanner input = new Scanner(System.in);
         System.out.print("Выберите тип поиска:\n 1. По индентификатору\n 2. По названию\n 3. По году выпуска\n 4. Назад\nВыберите действие: ");
         int number = input.nextInt();
-        while (number < 1 || number > 4) {
-            System.out.println("Вы ввели неверный пункт, попробуйте ещё раз: ");
+        while (!isNumberValid(number, 4)) {
             number = input.nextInt();
         }
-
+        boolean isSearchIsSuccessful = false;
         switch (number) {
             case 1:
-                filmDB.searchById();
+                isSearchIsSuccessful = filmDB.searchById();
                 break;
             case 2:
-                //filmDB.searchByTitle();
+                isSearchIsSuccessful = filmDB.searchByTitle();
                 break;
             case 3:
-                //filmDB.searchByYear();
+                isSearchIsSuccessful = filmDB.searchByYear();
                 break;
             case 4:
                 if (currentUser.isAdmin()) {
@@ -143,18 +137,43 @@ public class Application {
                 break;
         }
 
-        System.out.printf(" 1. Посмотреть детали фильма\n 2. Назад\nВыберите действие: ");
+        if (isSearchIsSuccessful) {
+            System.out.printf(" 1. Посмотреть детали фильма\n 2. Оставить отзыв\n 3. Редактировать отзывы\n 4. Назад\nВыберите действие: ");
+            number = input.nextInt();
+            while (!isNumberValid(number, 4)) {
+                number = input.nextInt();
+            }
+
+            switch (number) {
+                case 1:
+                    filmDB.showDetails();
+                    break;
+                case 2:
+                    filmDB.addReview(currentUser);
+                    break;
+                case 3:
+                    filmDB.moderateReview(currentUser);
+                    break;
+                case 4:
+                    search(currentUser);
+                    break;
+            }
+        } else {
+            System.out.printf("Ничего не найдено.\n");
+        }
+        System.out.printf("1. Назад\n");
         number = input.nextInt();
-        while (number < 1 || number > 2) {
-            System.out.println("Вы ввели неверный пункт, попробуйте ещё раз: ");
+        while (!isNumberValid(number, 1)) {
             number = input.nextInt();
         }
+        search(currentUser);
+    }
 
-        switch(number) {
-            case 1: filmDB.showDetails();
-            break;
-            case 2: search(currentUser);
-            break;
+    public boolean isNumberValid(int number, int k){
+        if (number < 1 || number > k){
+            System.out.println("Вы ввели неверный пункт, попробуйте ещё раз: ");
+            return false;
         }
+        return true;
     }
 }

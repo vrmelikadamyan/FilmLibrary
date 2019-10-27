@@ -1,5 +1,7 @@
 package com.company;
 
+import java.util.Scanner;
+
 public class AppUser implements User {
     private String login;
     private String nickname;
@@ -23,5 +25,9 @@ public class AppUser implements User {
 
     public boolean isAdmin(){
         return isAdmin;
+    }
+
+    public void moderateReviews(){
+
     }
 }
